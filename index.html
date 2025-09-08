@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suma y Sigue</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Suma y Sigue</h1>
+        
+        <div class="instructions game-intro">
+            <h2>¿Cómo jugar?</h2>
+            <ul>
+                <li>Desliza con el dedo (en celulares) o arrastra con el mouse (en PC) para mover los bloques.</li>
+                <li>Cuando dos bloques del mismo número se tocan, se fusionan en uno con la suma de ambos.</li>
+                <li>Después de cada movimiento, aparecerá un nuevo bloque de valor 2 o 4.</li>
+                <li>El objetivo es crear un bloque con el número 2048.</li>
+                <li>¡Obtienes puntos por cada fusión que realices!</li>
+            </ul>
+        </div>
+        
+        <button id="start-button">Comenzar Juego</button>
+        
+        <div class="game-container" style="display: none;">
+            <div class="score-container">
+                <div class="score-box">Puntuación: <span id="score">0</span></div>
+                <button id="restart-button">Reiniciar</button>
+            </div>
+            
+            <div class="grid" id="grid">
+                <!-- Las celdas se generarán con JavaScript -->
+            </div>
+            
+            <div class="game-message" id="game-message">
+                <p id="message-text"></p>
+                <button id="retry-button">Jugar de nuevo</button>
+            </div>
+            
+            <p class="swipe-info">Desliza el dedo para mover los bloques</p>
+        </div>
+    </div>
+
+    <script src="./js/game.js"></script>
+</body>
+</html>
