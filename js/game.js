@@ -193,4 +193,155 @@ document.addEventListener('DOMContentLoaded', () => {
         
         return moved;
     }
+    
+    // Comprobar estado del juego
+    function checkGameStatus() {
+        // Comprobar si hay 2048
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 4; j++) {
+                if (grid[i][j] === 2048) {
+                    gameWon();
+                    return;
+                }
+            }
+        }
+        
+        // Comprobar si hay movimientos posibles
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 4; j++) {
+                if (grid[i][j] === 0) {
+                    return; // Hay al menos un espacio vacío
+                }
+                
+                if (j < 3 && grid[i][j] === grid[i][j + 1]) {
+                    return; // Hay fusión horizontal posible
+                }
+                
+                if (i < 3 && grid[i][j] === grid[i + 1][j]) {
+                    return; // Hay fusión vertical posible
+                }
+            }
+        }
+        
+        // Si no hay movimientos posibles
+        gameOver = true;
+        gameMessage.style.display = 'flex';
+        messageText.textContent = '¡Juego Terminado!';
+    }
+    
+    // Ganar el juego
+    function gameWon() {
+        gameOver = true;
+        gameMessage.style.display = 'flex';
+        messageText.textContent = '¡Ganaste!';
+    }
+    
+    // Detectar dirección del deslizamiento
+    function detectSwipeDirection() {
+        const diffX = touchEndX - touchStartX;
+        const diffY = touchEndY - touchStartY;
+        
+        // Umbral mínimo de desplazamiento
+        if (Math.abs(diffX) < 30 && Math.abs(diffY) < 30) {
+            return null;
+        }
+        
+        if (Math.abs(diffX) > Math.abs(diffY)) {
+            // Deslizamiento horizontal
+            return diffX > 0 ? 'right' : 'left';
+        } else {
+            // Deslizamiento vertical
+            return diffY > 0 ? 'down' : 'up';
+        }
+    }
+    
+    // Event listeners para ratón
+    gridElement.addEventListener('mousedown', (event) => {
+        if (!gameStarted || gameOver) return;
+        
+        touchStartX = event.clientX;
+        touchStartY = event.clientY;
+        isDragging = true;
+    });
+    
+    document.addEventListener('mousemove', (event) => {
+        if (!isDragging) return;
+        
+        touchEndX = event.clientX;
+        touchEndY = event.clientY;
+    });
+    
+    document.addEventListener('mouseup', () => {
+        if (!isDragging) return;
+        
+        isDragging = false;
+        const direction = detectSwipeDirection();
+        if (direction) {
+            move(direction);
+        }
+    });
+    
+    // Event listeners para touch (móviles)
+    gridElement.addEventListener('touchstart', (event) => {
+        if (!gameStarted || gameOver) return;
+        
+        touchStartX = event.touches[0].clientX;
+        touchStartY = event.touches[0].clientY;
+    }, { passive: true });
+    
+    gridElement.addEventListener('touchmove', (event) => {
+        if (!gameStarted || gameOver) return;
+        
+        touchEndX = event.touches[0].clientX;
+        touchEndY = event.touches[0].clientY;
+    }, { passive: true });
+    
+    gridElement.addEventListener('touchend', (event) => {
+        if (!gameStarted || gameOver) return;
+        
+        const direction = detectSwipeDirection();
+        if (direction) {
+            move(direction);
+        }
+    }, { passive: true });
+    
+    // Event listeners para teclado
+    document.addEventListener('keydown', (event) => {
+        if (!gameStarted || gameOver) return;
+        
+        let moved = false;
+        
+        switch(event.key) {
+            case 'ArrowUp':
+                moved = move('up');
+                break;
+            case 'ArrowDown':
+                moved = move('down');
+                break;
+            case 'ArrowLeft':
+                moved = move('left');
+                break;
+            case 'ArrowRight':
+                moved = move('right');
+                break;
+            default:
+                return; // Salir si no es una tecla de flecha
+        }
+        
+        if (moved) {
+            event.preventDefault();
+        }
+    });
+    
+    // Botón de inicio
+    startButton.addEventListener('click', () => {
+        gameContainer.style.display = 'block';
+        startButton.style.display = 'none';
+        gameStarted = true;
+        initGame();
+    });
+    
+    // Botón de reinicio
+    restartButton.addEventListener('click', initGame);
+    retryButton.addEventListener('click', initGame);
 });
